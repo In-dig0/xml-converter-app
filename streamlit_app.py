@@ -5,7 +5,7 @@ from lxml import etree #Parse XML files
 
 def display_app_title():
     st.title(":blue[Working with xml invoice] :open_book:")
-    st.subheader(":gray[Web app that converts a b2b xml invoice file into a csv file]")
+    st.subheader(":gray[Web app that converts a b2b xml invoice file into a csv file.]")
     st.markdown("Powered with Streamlit :streamlit:")
 
 def upload_xml_file():
@@ -28,10 +28,10 @@ def parse_xml(file_input, grouping_opt):
     # Inizialize variables
     df_out = pd.DataFrame()
     t_filein = list()
-    t_prog_invio = list()
     t_fatt_b2b = list()
     t_piva_mitt = list()
     t_desc_mitt = list()    
+    t_tipo_doc = list()
     t_num_doc= list()
     t_data_doc = list()
     t_importo_doc = list()
@@ -65,37 +65,44 @@ def parse_xml(file_input, grouping_opt):
     if t_fatt_b2b[0] != "FPR12":
         e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
         st.exception(e)
-        
-    tag_prog_invio = './/FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio/text()'
-    element = tree.xpath(tag_prog_invio)
-    for el in element:
-        t_prog_invio.append(el)       
+         
     tag_piva_mitt = './/FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice/text()'
     element = tree.xpath(tag_piva_mitt)
     for el in element:
         t_piva_mitt.append(el) 
+    
     tag_desc_mitt = './/FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione/text()'
     element = tree.xpath(tag_desc_mitt)
     for el in element:
         t_desc_mitt.append(el)
+
+    tag_tipo_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento/text()'
+    element = tree.xpath(tag_tipo_doc)
+    for el in element:
+        t_tipo_doc.append(el)
+    
     tag_num_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero/text()'
     element = tree.xpath(tag_num_doc)
     for el in element:
         t_num_doc.append(el)
+    
     tag_data_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data/text()'
     element = tree.xpath(tag_data_doc)
     for el in element:
         t_data_doc.append(el)
+    
     tag_importo_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento/text()'
     element = tree.xpath(tag_importo_doc)
     for el in element:
         t_importo_doc.append(el)    
+    
     tag_causale = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Causale/text()'
     element = tree.xpath(tag_causale)
     for el in element:
         t_causale.append(el)
     if len(element) == 0:
         t_causale.append(' ')
+    
     # Position document data
     tag_nr_linea = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/NumeroLinea/text()'
     element = tree.xpath(tag_nr_linea)
@@ -172,11 +179,11 @@ def parse_xml(file_input, grouping_opt):
     nr_lines = len(d_nr_linea)
     if nr_lines != 0:
         t_filein = t_filein * nr_lines            
-        t_prog_invio = t_prog_invio * nr_lines
         t_piva_mitt = t_piva_mitt * nr_lines
         if len(t_desc_mitt) == 0:
             t_desc_mitt = [' '] 
         t_desc_mitt = t_desc_mitt * nr_lines
+        t_tipo_doc = t_tipo_doc * nr_lines
         t_num_doc = t_num_doc * nr_lines
         t_data_doc = t_data_doc * nr_lines
         t_importo_doc = t_importo_doc * nr_lines
@@ -186,9 +193,9 @@ def parse_xml(file_input, grouping_opt):
 
     # Create the dataframe
     df_out = pd.DataFrame({'T_filein': t_filein,
-#                           'T_prog_invio': t_prog_invio,
                            'T_piva_mitt': t_piva_mitt,
                            'T_desc_mitt': t_desc_mitt,
+                           'T_tipo_doc': t_tipo_doc,
                            'T_num_doc': t_num_doc,
                            'T_data_doc': t_data_doc,
                            'T_importo_doc': t_importo_doc,
