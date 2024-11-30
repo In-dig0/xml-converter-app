@@ -62,9 +62,12 @@ def parse_xml(file_input, grouping_opt):
     element = tree.xpath(tag_fattura_b2b)
     for el in element:
         t_fatt_b2b.append(el)
-    if t_fatt_b2b[0] != "FPR12":
+    if len(t_fatt_b2b) == 0:
         e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
         st.exception(e)
+    elif t_fatt_b2b != "FPR12":
+        e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
+        st.exception(e)   
          
     tag_piva_mitt = './/FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice/text()'
     element = tree.xpath(tag_piva_mitt)
