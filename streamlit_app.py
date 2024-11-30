@@ -66,7 +66,7 @@ def parse_xml(file_input, grouping_opt):
         e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
         st.exception(e)
         st.stop()
-    elif t_fatt_b2b != "FPR12":
+    elif t_fatt_b2b[0] != "FPR12":
         e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
         st.exception(e)
         st.stop()
