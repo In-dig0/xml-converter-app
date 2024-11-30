@@ -27,9 +27,9 @@ def parse_xml(file_input, grouping_opt):
     """ Function that parses an XMLB2B file (invoice) and returns a dataframe containing the most important informations of the documents"""
     # Inizialize variables
     df_out = pd.DataFrame()
-#    file_in = os.path.basename(file_input)
     t_filein = list()
     t_prog_invio = list()
+    t_fatt_b2b = list()
     t_piva_mitt = list()
     t_desc_mitt = list()    
     t_num_doc= list()
@@ -57,6 +57,15 @@ def parse_xml(file_input, grouping_opt):
 
     # Header document data    
     t_filein = [str(file_input.name)]
+    
+    tag_fattura_b2b = './/FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione/text()'
+    element = tree.xpath(tag_fattura_b2b)
+    for el in element:
+        t_fatt_b2b.append(el)
+    if t_fatt_b2b[0] != "FPR12":
+        e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
+        st.exception(e)
+        
     tag_prog_invio = './/FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio/text()'
     element = tree.xpath(tag_prog_invio)
     for el in element:
