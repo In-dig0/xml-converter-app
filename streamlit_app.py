@@ -153,7 +153,7 @@ def parse_xml(file_input, grouping_opt):
     element = tree.xpath(tag_descnota)
     for el in element:
         d_descnota.append(el)
-
+# Additional data
     allegati = dict()
     for i in range(len(d_tiponota)):
       nr_disegno = " "
@@ -172,13 +172,13 @@ def parse_xml(file_input, grouping_opt):
       d_rifdoc.append(rifdoc)
 
     tag_bolli = "RIMB.SPESE BOLLI        "
-    idx_bolli = d_desc_linea.index(tag_bolli)
-    if idx_bolli != -1:
-#      d_nr_linea.insert(idx_bolli,"**")
-      d_codart.insert(idx_bolli,"**")
-      d_um.insert(idx_bolli,"**")
-      d_nrdisegno.insert(idx_bolli,'**')
-      d_rifdoc.insert(idx_bolli,'**')
+    if tag_bolli in d_desc_linea:
+        idx_bolli = d_desc_linea.index(tag_bolli)
+    #      d_nr_linea.insert(idx_bolli,"**")
+        d_codart.insert(idx_bolli,"**")
+        d_um.insert(idx_bolli,"**")
+        d_nrdisegno.insert(idx_bolli,'**')
+        d_rifdoc.insert(idx_bolli,'**')
 
     # Adjust lists size for having the same number of elements   
     nr_lines = len(d_nr_linea)
