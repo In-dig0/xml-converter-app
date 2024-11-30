@@ -5,7 +5,7 @@ from lxml import etree #Parse XML files
 
 def display_app_title():
     st.title(":blue[Working with xml invoice] :open_book:")
-    st.subheader(":gray[Web app that converts a b2b xml invoice file into a csv file, extracting only positions.]")
+    st.subheader(":gray[Web app that converts a b2b xml invoice file into a csv file]")
     st.markdown("Powered with Streamlit :streamlit:")
 
 def upload_xml_file():
