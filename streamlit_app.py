@@ -1,7 +1,8 @@
 # Import 3-party packages
 import pandas as pd #Deal with dataframe 
 import streamlit as st
-from lxml import etree #Parse XML files
+# from lxml import etree #Parse XML files
+import xmltodict
 
 def display_app_title():
     st.title(":blue[Working with xml invoice] :open_book:")
