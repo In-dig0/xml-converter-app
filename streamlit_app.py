@@ -259,7 +259,7 @@ if __name__ == "__main__":
                     # Write each dataframe to a different worksheet.
                     df.to_excel(writer, sheet_name='Foglio1')
                     # Close the Pandas Excel writer and output the Excel file to the buffer
-                    writer.save()
+                    writer.close()
                 st.download_button(
                     label="Download Excel worksheets",
                     data=buffer,
