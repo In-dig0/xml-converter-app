@@ -2,7 +2,7 @@
 import pandas as pd #Deal with dataframe 
 import streamlit as st
 # from lxml import etree #Parse XML files
-from io import StringIO
+from io 
 import xmltodict
 import xlsxwriter
 
@@ -53,7 +53,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     #    xml_string = f.read()
 
     # To convert to a string based IO:
-    stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+    stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
     #st.write(stringio)
 
     # To read file as string:
