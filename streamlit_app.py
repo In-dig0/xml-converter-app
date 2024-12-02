@@ -2,6 +2,7 @@
 import pandas as pd #Deal with dataframe 
 import streamlit as st
 # from lxml import etree #Parse XML files
+from io import StringIO
 import xmltodict
 
 def display_app_title():
