@@ -26,201 +26,172 @@ def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
 def parse_xml(file_input, grouping_opt):
     """ Function that parses an XMLB2B file (invoice) and returns a dataframe containing the most important informations of the documents"""
     # Inizialize variables
-    df_out = pd.DataFrame()
-    t_filein = list()
-    t_fatt_b2b = list()
     t_piva_mitt = list()
-    t_desc_mitt = list()    
+    t_ragsoc_mitt = list()
     t_tipo_doc = list()
-    t_num_doc= list()
+    t_num_doc = list()
     t_data_doc = list()
     t_importo_doc = list()
-    t_causale = list()
-    d_nr_linea = list()
-    d_codart = list()
-    d_qta = list()
-    d_um = list()
-    d_przunit = list()
-    d_desc_linea = list()
-    d_prezzo_tot= list()
-    d_tiponota = list()
-    d_descnota = list()
-    d_nrdisegno = list()
-    d_rifdoc = list()
-    # Parser instance
-    parser = etree.XMLParser()
+    p_nr_linea = list()
+    p_codart = list()
+    p_qta = list()
+    p_um = list()
+    p_przunit = list()
+    p_desc_linea = list()
+    p_prezzo_tot = list()
+    p_codiva = list()
+    p_tiponota = list()
+    p_descnota = list()
+    p_nrdisegno = list()
+    p_nrddt = list()
+
+    # Open xml file
+    with open(file_input, mode = "r", encoding="utf-8") as f:
+        xml_string = f.read()
+    # Trasform xml file into dictionary
+    xml_dict = xmltodict.parse(xml_string)
+    
+    tag_root = list(xml_dict.keys())[0]
+
+    # Extract data from FatturaElettronicaHeader
     try:
-        tree = etree.parse(file_input, parser)
-    except Exception as errMsg:
-        print(f'**Error XML format file {file_input}: {errMsg}')
-        return df_out, 1
+        tag_piva_mitt = xml_dict[tag_root]["FatturaElettronicaHeader"]["CedentePrestatore"]["DatiAnagrafici"]["IdFiscaleIVA"]["IdCodice"]
+    except KeyError:
+        tag_piva_mitt = "**"
+    t_piva_mitt.append(tag_piva_mitt)
 
-    # Header document data    
-    t_filein = [str(file_input.name)]
-    
-    tag_fattura_b2b = './/FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione/text()'
-    element = tree.xpath(tag_fattura_b2b)
-    for el in element:
-        t_fatt_b2b.append(el)
-    if len(t_fatt_b2b) == 0:
-        e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
-        st.exception(e)
-        st.stop()
-    elif t_fatt_b2b[0] != "FPR12":
-        e = RuntimeError("**Error XML format file: it is NOT a b2b invoice!")
-        st.exception(e)
-        st.stop()
-         
-    tag_piva_mitt = './/FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice/text()'
-    element = tree.xpath(tag_piva_mitt)
-    for el in element:
-        t_piva_mitt.append(el) 
-    
-    tag_desc_mitt = './/FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione/text()'
-    element = tree.xpath(tag_desc_mitt)
-    for el in element:
-        t_desc_mitt.append(el)
+    try:
+        tag_ragsoc_mitt = xml_dict[tag_root]["FatturaElettronicaHeader"]["CedentePrestatore"]["DatiAnagrafici"]["Anagrafica"]["Denominazione"]
+    except KeyError:
+        tag_ragsoc_mitt = "**"
+    t_ragsoc_mitt.append(tag_ragsoc_mitt)
 
-    tag_tipo_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento/text()'
-    element = tree.xpath(tag_tipo_doc)
-    for el in element:
-        t_tipo_doc.append(el)
-    
-    tag_num_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero/text()'
-    element = tree.xpath(tag_num_doc)
-    for el in element:
-        t_num_doc.append(el)
-    
-    tag_data_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data/text()'
-    element = tree.xpath(tag_data_doc)
-    for el in element:
-        t_data_doc.append(el)
-    
-    tag_importo_doc = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento/text()'
-    element = tree.xpath(tag_importo_doc)
-    for el in element:
-        t_importo_doc.append(el)    
-    
-    tag_causale = './/FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Causale/text()'
-    element = tree.xpath(tag_causale)
-    for el in element:
-        t_causale.append(el)
-    if len(element) == 0:
-        t_causale.append(' ')
-    
-    # Position document data
-    tag_nr_linea = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/NumeroLinea/text()'
-    element = tree.xpath(tag_nr_linea)
-    for el in element:
-        d_nr_linea.append(el)
 
-    tag_codart = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/CodiceArticolo/CodiceValore/text()'
-    element = tree.xpath(tag_codart)
-    for el in element:
-        d_codart.append(el)
+    # Extract data from FatturaElettronicaBody - DatiGenerali
 
-    tag_desc_linea = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/Descrizione/text()'
-    element = tree.xpath(tag_desc_linea)
-    for el in element:
-        d_desc_linea.append(el)
+    try:
+        tag_tipo_doc = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiGenerali"]["DatiGeneraliDocumento"]["TipoDocumento"]
+    except KeyError:
+        tag_tipo_doc = "**"
+    t_tipo_doc.append(tag_tipo_doc)
 
-    tag_qta = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/Quantita/text()'
-    element = tree.xpath(tag_qta)
-    for el in element:
-        d_qta.append(el)
+    try:
+        tag_data_doc = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiGenerali"]["DatiGeneraliDocumento"]["Data"]
+    except KeyError:
+        tag_data_doc = "**"
+    t_data_doc.append(tag_data_doc)
 
-    tag_um = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/UnitaMisura/text()'
-    element = tree.xpath(tag_um)
-    for el in element:
-        d_um.append(el)
+    try:
+        tag_num_doc = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiGenerali"]["DatiGeneraliDocumento"]["Numero"]
+    except KeyError:
+        tag_num_doc = "**"
+    t_num_doc.append(tag_num_doc)
 
-    tag_przunit = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/PrezzoUnitario/text()'
-    element = tree.xpath(tag_przunit)
-    for el in element:
-        d_przunit.append(el)
+    try:
+        tag_importo_doc = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiGenerali"]["DatiGeneraliDocumento"]["ImportoTotaleDocumento"]
+    except KeyError:
+        tag_importo_doc = "**"
+    t_importo_doc.append(tag_importo_doc)
 
-    tag_prezzo_tot = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/PrezzoTotale/text()'
-    element = tree.xpath(tag_prezzo_tot)
-    for el in element:
-        d_prezzo_tot.append(el)
+    # Extract data from FatturaElettronicaBody - DatiBeniServizi
+    lines = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiBeniServizi"]["DettaglioLinee"]
+    for line in lines:
+        try:
+            tag_nr_linea = line["NumeroLinea"]
+        except KeyError:
+            tag_nr_linea = "**"    
+        p_nr_linea.append(tag_nr_linea)
+        
+        try:
+            tag_codart = line["CodiceArticolo"]["CodiceValore"]
+        except KeyError:
+            tag_codart = "**"    
+        p_codart.append(tag_codart)     
 
-    tag_tiponota = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/AltriDatiGestionali/TipoDato/text()'
-    element = tree.xpath(tag_tiponota)
-    for el in element:
-        d_tiponota.append(el)
+        try:
+            tag_desc_linea = line["Descrizione"]
+        except KeyError:
+            tag_desc_linea = "**"
+        p_desc_linea.append(tag_desc_linea) 
 
-    tag_descnota = './/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/AltriDatiGestionali/RiferimentoTesto/text()'
-    element = tree.xpath(tag_descnota)
-    for el in element:
-        d_descnota.append(el)
-# Additional data
-    allegati = dict()
-    for i in range(len(d_tiponota)):
-      nr_disegno = " "
-      if d_tiponota[i] == "DISEGNO":
-        allegati[i] = d_tiponota[i]
-    for i in allegati.keys():
-      nr_disegno = d_descnota[i]
-      d_nrdisegno.append(nr_disegno)
-    allegati = dict()
-    for i in range(len(d_tiponota)):
-      nr_disegno = " "
-      if d_tiponota[i] == "N01":
-        allegati[i] = d_tiponota[i]
-    for i in allegati.keys():
-      rifdoc = d_descnota[i]
-      d_rifdoc.append(rifdoc)
+        try:
+            tag_qta = line["Quantita"]
+        except KeyError:
+            tag_qta = "0"    
+        p_qta.append(tag_qta)     
+        
+        try:
+            tag_um = line["UnitaMisura"]
+        except KeyError:
+            tag_um = "**"
+        p_um.append(tag_um)        
+        
+        try:
+            tag_przunit = line["PrezzoUnitario"]
+        except KeyError:
+            tag_przunit = "0"
+        p_przunit.append(tag_przunit)   
 
-    tag_bolli = "RIMB.SPESE BOLLI        "
-    if tag_bolli in d_desc_linea:
-        idx_bolli = d_desc_linea.index(tag_bolli)
-    #      d_nr_linea.insert(idx_bolli,"**")
-        d_codart.insert(idx_bolli,"**")
-        d_um.insert(idx_bolli,"**")
-        d_nrdisegno.insert(idx_bolli,'**')
-        d_rifdoc.insert(idx_bolli,'**')
+        try:
+            tag_prezzo_tot = line["PrezzoTotale"]
+        except KeyError:
+            tag_prezzo_tot = "0"
+        p_prezzo_tot.append(tag_prezzo_tot) 
+
+        try:
+            tag_codiva = line["AliquotaIVA"]
+        except KeyError:
+            tag_codiva = "0"
+        p_codiva.append(tag_codiva) 
+
+        if "AltriDatiGestionali" in line:
+            lista_allegati = line["AltriDatiGestionali"]
+            tag_nrdisegno = "**"
+            tag_nrddt = "**"
+            for allegati in lista_allegati:
+                if allegati["TipoDato"] == "DISEGNO":
+                    tag_nrdisegno = allegati["RiferimentoTesto"]   
+                elif allegati["TipoDato"] == "N01":
+                    tag_nrddt = allegati["RiferimentoTesto"]
+        else:
+            tag_nrdisegno = "**"
+            tag_nrddt = "**"    
+        p_nrdisegno.append(tag_nrdisegno)       
+        p_nrddt.append(tag_nrddt)
 
     # Adjust lists size for having the same number of elements   
-    nr_lines = len(d_nr_linea)
-    if nr_lines != 0:
-        t_filein = t_filein * nr_lines            
+    nr_lines = len(p_nr_linea)
+    if nr_lines != 0:         
         t_piva_mitt = t_piva_mitt * nr_lines
-        if len(t_desc_mitt) == 0:
-            t_desc_mitt = [' '] 
-        t_desc_mitt = t_desc_mitt * nr_lines
-        t_tipo_doc = t_tipo_doc * nr_lines
+        t_ragsoc_mitt = t_ragsoc_mitt * nr_lines
         t_num_doc = t_num_doc * nr_lines
         t_data_doc = t_data_doc * nr_lines
         t_importo_doc = t_importo_doc * nr_lines
-        if len(t_causale) == 0:
-            t_causale = [' ']    
-        t_causale = t_causale * nr_lines
+
 
     # Create the dataframe
-    df_out = pd.DataFrame({'T_filein': t_filein,
-                           'T_piva_mitt': t_piva_mitt,
-                           'T_desc_mitt': t_desc_mitt,
-                           'T_tipo_doc': t_tipo_doc,
+    df_out = pd.DataFrame({'T_piva_mitt': t_piva_mitt,
+                           'T_ragsoc_mitt': t_ragsoc_mitt,
                            'T_num_doc': t_num_doc,
                            'T_data_doc': t_data_doc,
                            'T_importo_doc': t_importo_doc,
-                           'T_causale': t_causale,
-                           'P_nr_linea': d_nr_linea,
-                           'P_codart': d_codart,
-                           'P_desc_linea': d_desc_linea,
-                           'P_qta': d_qta,
-                           'P_um': d_um,
-                           'P_przunit': d_przunit,
-                           'P_prezzo_tot': d_prezzo_tot,
-                           'P_nrdisegno': d_nrdisegno,
-                           'P_rifdoc': d_rifdoc,
+                           'P_nr_linea': p_nr_linea,
+                           'P_codart': p_codart,
+                           'P_desc_linea': p_desc_linea,
+                           'P_qta': p_qta,
+                           'P_um': p_um,
+                           'P_przunit': p_przunit,
+                           'P_prezzo_tot': p_prezzo_tot,
+                           'P_nrdisegno': p_nrdisegno,
+                           'P_nrddt': p_nrddt,
                            })
     # Convert some columns into float data type
-#    df_out['T_data_doc'] = df_out['T_data_doc'].astype('datetime64[ns]')    
     df_out['T_importo_doc'] = df_out['T_importo_doc'].astype(float)
     df_out['P_qta'] = df_out['P_qta'].astype(float)
     df_out['P_przunit'] = df_out['P_przunit'].astype(float)
     df_out['P_prezzo_tot'] = df_out['P_prezzo_tot'].astype(float)
+    df_out['T_filein'] = file_input
+    
     # Grouping if option is active
     if grouping_opt:
         df_out = df_sum_codart(df_out)
