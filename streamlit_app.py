@@ -178,7 +178,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
         t_num_doc = t_num_doc * nr_lines
         t_data_doc = t_data_doc * nr_lines
         t_importo_doc = t_importo_doc * nr_lines
-        t_filename = uploaded_file.name * nr_lines
+        t_filename = list(uploaded_file.name) * nr_lines
 
     # Create the dataframe
     df_out = pd.DataFrame({'T_filein': t_filename,
