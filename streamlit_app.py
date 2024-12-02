@@ -172,16 +172,17 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
 
     # Adjust lists size for having the same number of elements   
     nr_lines = len(p_nr_linea)
-    if nr_lines != 0:         
+    if nr_lines != 0:    
         t_piva_mitt = t_piva_mitt * nr_lines
         t_ragsoc_mitt = t_ragsoc_mitt * nr_lines
         t_num_doc = t_num_doc * nr_lines
         t_data_doc = t_data_doc * nr_lines
         t_importo_doc = t_importo_doc * nr_lines
-
+        t_filename = uploaded_file.name * nr_lines
 
     # Create the dataframe
-    df_out = pd.DataFrame({'T_piva_mitt': t_piva_mitt,
+    df_out = pd.DataFrame({'T_filein': t_filename,
+                           'T_piva_mitt': t_piva_mitt,
                            'T_ragsoc_mitt': t_ragsoc_mitt,
                            'T_num_doc': t_num_doc,
                            'T_data_doc': t_data_doc,
@@ -201,7 +202,6 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     df_out['P_qta'] = df_out['P_qta'].astype(float)
     df_out['P_przunit'] = df_out['P_przunit'].astype(float)
     df_out['P_prezzo_tot'] = df_out['P_prezzo_tot'].astype(float)
-    df_out['T_filein'] = uploaded_file.name
     
     # Grouping if option is active
     if grouping_opt:
