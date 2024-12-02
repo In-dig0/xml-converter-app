@@ -257,7 +257,7 @@ if __name__ == "__main__":
                 # Create a Pandas Excel writer using XlsxWriter as the engine.
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                     # Write each dataframe to a different worksheet.
-                    df.to_excel(writer, sheet_name='Foglio1')
+                    df.to_excel(writer, sheet_name=uploaded_file.name)
                     # Close the Pandas Excel writer and output the Excel file to the buffer
                     writer.close()
                 st.download_button(
