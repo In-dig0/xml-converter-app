@@ -246,13 +246,13 @@ if __name__ == "__main__":
             csv_data = csv_convert_df(df)
             csv_name = "export_df.csv"
             if len(df) > 0:
-                st.download_button(
-                    label="Download as CSV",
-                    data=csv_data,
-                    file_name=csv_name,
-                    mime="text/csv",
-                    icon="🔽"
-                )
+                # st.download_button(
+                #     label="Download as CSV",
+                #     data=csv_data,
+                #     file_name=csv_name,
+                #     mime="text/csv",
+                #     icon="🔽"
+                # )
                 buffer = io.BytesIO()
                 # Create a Pandas Excel writer using XlsxWriter as the engine.
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
@@ -261,7 +261,7 @@ if __name__ == "__main__":
                     # Close the Pandas Excel writer and output the Excel file to the buffer
                     writer.close()
                 st.download_button(
-                    label="Download Excel worksheets",
+                    label="Download Excel",
                     data=buffer,
                     file_name="df_download.xlsx",
                     mime="application/vnd.ms-excel",
