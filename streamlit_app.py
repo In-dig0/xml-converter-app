@@ -4,6 +4,7 @@ import streamlit as st
 # from lxml import etree #Parse XML files
 from io import StringIO
 import xmltodict
+import xlsxwriter
 
 def display_app_title():
     st.title(":blue[Working with xml invoice] :open_book:")
@@ -251,6 +252,18 @@ if __name__ == "__main__":
                     file_name=csv_name,
                     mime="text/csv",
                     icon="🔽"
-                )            
-
+                )
+                buffer = io.BytesIO()
+                # Create a Pandas Excel writer using XlsxWriter as the engine.
+                with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                    # Write each dataframe to a different worksheet.
+                    df.to_excel(writer, sheet_name='Foglio1')
+                    # Close the Pandas Excel writer and output the Excel file to the buffer
+                    writer.save()
+                st.download_button(
+                    label="Download Excel worksheets",
+                    data=buffer,
+                    file_name="df_download.xlsx",
+                    mime="application/vnd.ms-excel"
+                )
 
