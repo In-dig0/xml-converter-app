@@ -201,7 +201,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     df_out['P_qta'] = df_out['P_qta'].astype(float)
     df_out['P_przunit'] = df_out['P_przunit'].astype(float)
     df_out['P_prezzo_tot'] = df_out['P_prezzo_tot'].astype(float)
-    df_out['T_filein'] = file_input
+    df_out['T_filein'] = uploaded_file.name
     
     # Grouping if option is active
     if grouping_opt:
