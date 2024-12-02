@@ -264,6 +264,7 @@ if __name__ == "__main__":
                     label="Download Excel worksheets",
                     data=buffer,
                     file_name="df_download.xlsx",
-                    mime="application/vnd.ms-excel"
+                    mime="application/vnd.ms-excel",
+                    icon="⏬"
                 )
 
