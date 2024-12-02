@@ -23,7 +23,7 @@ def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
     return df_grouped
 
 
-def parse_xml(file_input, grouping_opt):
+def parse_xml(file_input, grouping_opt) -> pd.DataFrame:
     """ Function that parses an XMLB2B file (invoice) and returns a dataframe containing the most important informations of the documents"""
     # Inizialize variables
     t_piva_mitt = list()
