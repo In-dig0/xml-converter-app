@@ -24,7 +24,7 @@ def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
     return df_grouped
 
 
-def parse_xml(file_input, grouping_opt) -> pd.DataFrame:
+def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     """ Function that parses an XMLB2B file (invoice) and returns a dataframe containing the most important informations of the documents"""
     # Inizialize variables
     t_piva_mitt = list()
@@ -47,10 +47,19 @@ def parse_xml(file_input, grouping_opt) -> pd.DataFrame:
     p_nrddt = list()
 
     # Open xml file
-    with open(file_input, mode = "r", encoding="utf-8") as f:
-        xml_string = f.read()
+    # with open(file_input, mode = "r", encoding="utf-8") as f:
+    #    xml_string = f.read()
+
+    # To convert to a string based IO:
+    stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+    #st.write(stringio)
+
+    # To read file as string:
+    string_data = stringio.read()
+    #st.write(string_data)
+    
     # Trasform xml file into dictionary
-    xml_dict = xmltodict.parse(xml_string)
+    xml_dict = xmltodict.parse(string_data)
     
     tag_root = list(xml_dict.keys())[0]
 
