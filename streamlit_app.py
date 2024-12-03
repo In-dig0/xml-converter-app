@@ -243,27 +243,19 @@ if __name__ == "__main__":
             st.markdown(''' :orange[**OUTPUT INFO**] ''')
             st.write("--> :green[Number of record of output dataframe: ]",len(df))            
             st.dataframe(df, hide_index=False)
-            csv_data = csv_convert_df(df)
-            csv_name = "export_df.csv"
             if len(df) > 0:
-                # st.download_button(
-                #     label="Download as CSV",
-                #     data=csv_data,
-                #     file_name=csv_name,
-                #     mime="text/csv",
-                #     icon="🔽"
-                # )
                 buffer = io.BytesIO()
                 # Create a Pandas Excel writer using XlsxWriter as the engine.
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                     # Write each dataframe to a different worksheet.
-                    df.to_excel(writer, sheet_name=uploaded_file.name)
+                    df.to_excel(writer, sheet_name="Invoice")
                     # Close the Pandas Excel writer and output the Excel file to the buffer
                     writer.close()
+                file_out = uploaded_file.name.replace(".xml",".xlsx")
                 st.download_button(
                     label="Download Excel",
                     data=buffer,
-                    file_name="df_download.xlsx",
+                    file_name=file_out,
                     mime="application/vnd.ms-excel",
                     icon="⏬"
                 )
