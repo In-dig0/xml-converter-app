@@ -18,12 +18,14 @@ def upload_xml_file():
     uploaded_file = st.file_uploader("Choose a xml b2b invoice file:", type="xml", accept_multiple_files=False)
     return uploaded_file
 
+
 def write_applog():
     appname = __file__
     cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     st.divider()
-    st.write("--> :green[App terminated successfully: ]", cpudate)   
-    
+    st.write("--> :blue-background[App terminated successfully: ]", cpudate)   
+
+
 def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
     """ Function that searches keywords in a columnn_list of the dataframe df and returns the dataframe filtered"""
     df_grouped = pd.DataFrame()   
@@ -224,12 +226,14 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
 def onSearch(opt=None):
     st.session_state["clicked"] = True
 
+
 #@st.cache_data
 def csv_convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
 #    return df.to_csv().encode("utf-8")    
     return df.to_csv(header=True, index=False, sep=';', decimal= ",")
-    
+
+
 if __name__ == "__main__":
     display_app_title()
     st.markdown(''' :orange[**INPUT FILE**] ''')
