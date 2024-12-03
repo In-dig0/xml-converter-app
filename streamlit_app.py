@@ -5,17 +5,25 @@ import streamlit as st
 import io 
 import xmltodict
 import xlsxwriter
+from datetime import datetime
 
 def display_app_title():
     st.title(":blue[Working with xml invoice] :open_book:")
     st.subheader(":gray[Web app that converts a xml invoice document into a csv file.]")
     st.markdown("Powered with Streamlit :streamlit:")
-    st.markdown(__file__)
+    st.divider()
+
 
 def upload_xml_file():
     uploaded_file = st.file_uploader("Choose a xml b2b invoice file:", type="xml", accept_multiple_files=False)
     return uploaded_file
 
+def write_applog():
+    appname = __file__
+    cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    st.divider()
+    st.write("--> :yellow[App termimnated successfully: ]", cpudate)   
+    
 def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
     """ Function that searches keywords in a columnn_list of the dataframe df and returns the dataframe filtered"""
     df_grouped = pd.DataFrame()   
@@ -224,7 +232,6 @@ def csv_convert_df(df):
     
 if __name__ == "__main__":
     display_app_title()
-    st.divider()
     st.markdown(''' :orange[**INPUT FILE**] ''')
     uploaded_file = upload_xml_file()
     grouping_opt = st.toggle("Activate grouping feature")
