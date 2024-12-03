@@ -267,4 +267,4 @@ if __name__ == "__main__":
                     mime="application/vnd.ms-excel",
                     icon="⏬"        
                 )
-    write_applog()
+            write_applog()
