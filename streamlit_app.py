@@ -22,7 +22,7 @@ def write_applog():
     appname = __file__
     cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     st.divider()
-    st.write("--> :yellow[App termimnated successfully: ]", cpudate)   
+    st.write("--> :green[App terminated successfully: ]", cpudate)   
     
 def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
     """ Function that searches keywords in a columnn_list of the dataframe df and returns the dataframe filtered"""
