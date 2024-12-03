@@ -265,6 +265,6 @@ if __name__ == "__main__":
                     data=buffer,
                     file_name=file_out,
                     mime="application/vnd.ms-excel",
-                    icon="⏬"
+                    icon="⏬"        
                 )
-
+    write_applog()
