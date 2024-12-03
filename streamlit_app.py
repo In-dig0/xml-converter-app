@@ -10,6 +10,7 @@ def display_app_title():
     st.title(":blue[Working with xml invoice] :open_book:")
     st.subheader(":gray[Web app that converts a xml invoice document into a csv file.]")
     st.markdown("Powered with Streamlit :streamlit:")
+    st.markdown(__file__)
 
 def upload_xml_file():
     uploaded_file = st.file_uploader("Choose a xml b2b invoice file:", type="xml", accept_multiple_files=False)
