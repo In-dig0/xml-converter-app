@@ -57,6 +57,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     p_tiponota = list()
     p_descnota = list()
     p_nrdisegno = list()
+    p_commessa = list()
     p_nrddt = list()
 
     # Open xml file
@@ -170,16 +171,21 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
         if "AltriDatiGestionali" in line:
             lista_allegati = line["AltriDatiGestionali"]
             tag_nrdisegno = "**"
+            tag_commessa = "**"
             tag_nrddt = "**"
             for allegati in lista_allegati:
                 if allegati["TipoDato"] == "DISEGNO":
-                    tag_nrdisegno = allegati["RiferimentoTesto"]   
+                    tag_nrdisegno = allegati["RiferimentoTesto"]
+                elif allegati[""] == "COMMESSA":
+                    tag_commessa = allegati["RiferimentoTesto"]
                 elif allegati["TipoDato"] == "N01":
                     tag_nrddt = allegati["RiferimentoTesto"]
         else:
             tag_nrdisegno = "**"
+            tag_commessa = "**"
             tag_nrddt = "**"    
-        p_nrdisegno.append(tag_nrdisegno)       
+        p_nrdisegno.append(tag_nrdisegno)
+        p_commessa.append(tag_commessa)
         p_nrddt.append(tag_nrddt)
 
     # Adjust lists size for having the same number of elements   
@@ -207,6 +213,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
                            'P_przunit': p_przunit,
                            'P_prezzo_tot': p_prezzo_tot,
                            'P_nrdisegno': p_nrdisegno,
+                           'P_commessa': p_commessa,
                            'P_nrddt': p_nrddt,
                            })
     # Convert some columns into float data type
