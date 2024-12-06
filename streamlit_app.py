@@ -176,7 +176,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
             for allegati in lista_allegati:
                 if allegati["TipoDato"] == "DISEGNO":
                     tag_nrdisegno = allegati["RiferimentoTesto"]
-                elif allegati[""] == "COMMESSA":
+                elif allegati["TipoDato"] == "COMMESSA":
                     tag_commessa = allegati["RiferimentoTesto"]
                 elif allegati["TipoDato"] == "N01":
                     tag_nrddt = allegati["RiferimentoTesto"]
