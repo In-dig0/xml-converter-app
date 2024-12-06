@@ -9,7 +9,7 @@ from datetime import datetime
 
 def display_app_title():
     st.title(":blue[Working with xml invoice] :open_book:")
-    st.subheader(":gray[Web app that converts a xml invoice document into a csv file.]")
+    st.subheader(":gray[Web app that converts a xml invoice document into a Excel file.]")
     st.markdown("Powered with Streamlit :streamlit:")
     st.divider()
 
