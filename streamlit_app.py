@@ -65,7 +65,9 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     sqlcode = """INSERT INTO applog (appname, applink, apparam, appstatus, appmsg, cpudate)
             VALUES (?, ?, ?, ?, ?, ?);
             """
-    cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    rome_tz = pytz.timezone('Europe/Rome')
+    rome_datetime = rome_tz.localize(datetime.datetime.now()) 
+    cpudate = rome_datetime.strftime("%Y-%m-%d %H:%M:%S")
     values = (log_values["appname"], log_values["applink"], log_values["apparam"], log_values["appstatus"], log_values["appmsg"], cpudate)
     try:
         cursor.execute(sqlcode, values)
