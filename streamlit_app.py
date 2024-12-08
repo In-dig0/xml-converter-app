@@ -33,9 +33,13 @@ def display_applog() -> None:
 def write_applog_to_sqlitecloud(log_values:dict) -> None:   
     appname = __file__
     # Get database information
-    db_link = os.getenv('SQLITECLOUD_DBLINK')
-    db_apikey = os.getenv('SQLITECLOUD_APIKEY')
-    db_name = os.getenv('SQLITECLOUD_DBNAME')
+    try:
+        db_link = st.secrets["SQLITE_DBLINK"]
+        db_apikey = st.secrets["SQLITE_APIKEY"]
+        db_name = st.secrets["SQLITE_DBNAME"]
+    except Exception as errMsg:
+        e = RuntimeError("Failed getting database credentials!")
+        st.exception(e)
     conn_string = "".join([db_link, db_apikey])
     conn = sqlitecloud.connect(conn_string)
     conn.execute(f"USE DATABASE {db_name}")
@@ -309,9 +313,6 @@ if __name__ == "__main__":
             log_values["apparam"] = uploaded_file.name
             log_values["appstatus"] = "COMPLETED"
             log_values["appmsg"] = " "
-            st.write(f"Databse name: {st.secrets["SQLITE_DBLINK"]}")
-            st.write(f"Databse name: {st.secrets["SQLITE_APIKEY"]}")                        
-            st.write(f"Databse name: {st.secrets["SQLITE_DBNAME"]}")
-#            write_applog_to_sqlitecloud(log_values)
+            write_applog_to_sqlitecloud(log_values)
 
 
