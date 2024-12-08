@@ -4,9 +4,12 @@ import streamlit as st
 import io 
 import xmltodict
 import xlsxwriter
-from datetime import datetime
 import sqlitecloud
+# Import standard packages
+from datetime import datetime
 import os
+from pytz import timezone
+
 
 def display_app_title():
     """ Display program title and a short description of the app's scope """
@@ -30,7 +33,9 @@ def display_applog() -> None:
     st.markdown(''' :orange[**APP LOG**] ''')
     st.write(" :mantelpiece_clock: :blue-background[App terminated successfully: ]", cpudate)   
 
-def write_applog_to_sqlitecloud(log_values:dict) -> None:   
+
+def write_applog_to_sqlitecloud(log_values:dict) -> None:
+    """ Write applog into SQLite Cloud Database"""
     appname = __file__
     # Get database information
     try:
@@ -38,12 +43,22 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
         db_apikey = st.secrets["SQLITE_APIKEY"]
         db_name = st.secrets["SQLITE_DBNAME"]
     except Exception as errMsg:
-        e = RuntimeError("Failed getting database credentials!")
+        e = RuntimeError("**ERROR getting database credentials!")
         st.exception(e)
+    
     conn_string = "".join([db_link, db_apikey])
-    conn = sqlitecloud.connect(conn_string)
+    # Connect to SQLite Cloud platform
+    try:
+        conn = sqlitecloud.connect(conn_string)
+    except Exception as errMsg:
+        e = RuntimeError(f"**ERROR connecting to database: {errMsg}")
+        st.exception(e)
+    
+    # Open SQLite database
     conn.execute(f"USE DATABASE {db_name}")
     cursor = conn.cursor()
+    
+    # Setup the sqlcode for inserting log asd a new row
     sqlcode = """INSERT INTO applog (appname, applink, apparam, appstatus, appmsg, cpudate)
             VALUES (?, ?, ?, ?, ?, ?);
             """
@@ -52,7 +67,7 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     try:
         cursor.execute(sqlcode, values)
     except Exception as errMsg:
-        e = RuntimeError(errMsg)
+        e = RuntimeError(f"E"errMsg)
         st.exception(e)
     else:
         conn.commit()        
@@ -94,17 +109,12 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     p_commessa = list()
     p_nrddt = list()
 
-    # Open xml file
-    # with open(file_input, mode = "r", encoding="utf-8") as f:
-    #    xml_string = f.read()
-
     # To convert to a string based IO:
     stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
     #st.write(stringio)
 
     # To read file as string:
     string_data = stringio.read()
-    #st.write(string_data)
     
     # Trasform xml file into dictionary
     xml_dict = xmltodict.parse(string_data)
@@ -126,7 +136,6 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
 
 
     # Extract data from FatturaElettronicaBody - DatiGenerali
-
     try:
         tag_tipo_doc = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiGenerali"]["DatiGeneraliDocumento"]["TipoDocumento"]
     except KeyError:
@@ -222,7 +231,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
         p_commessa.append(tag_commessa)
         p_nrddt.append(tag_nrddt)
 
-    # Adjust lists size for having the same number of elements   
+    # Adjust lists size in order to have the same number of elements   
     nr_lines = len(p_nr_linea)
     if nr_lines != 0:    
         t_piva_mitt = t_piva_mitt * nr_lines
@@ -264,7 +273,9 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     
     return df_out
 
+
 def onSearch(opt=None):
+    """ Function that modify the session state when clicked by user"""
     st.session_state["clicked"] = True
 
 
