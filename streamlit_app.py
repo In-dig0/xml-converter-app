@@ -5,10 +5,11 @@ import io
 import xmltodict
 import xlsxwriter
 import sqlitecloud
+from pytz import timezone
 # Import standard packages
 from datetime import datetime
 import os
-from pytz import timezone
+
 
 
 def display_app_title():
@@ -28,7 +29,9 @@ def upload_xml_file() -> None:
 def display_applog() -> None:
     """ Display status and date/time of the app """
     appname = __file__
-    cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")    
+    rome_tz = pytz.timezone('Europe/Rome')
+    rome_datetime = tz.localize(datetime.datetime.now()) 
+    cpudate = rome_datetime.strftime("%Y-%m-%d %H:%M:%S")
     st.divider()
     st.markdown(''' :orange[**APP LOG**] ''')
     st.write(" :mantelpiece_clock: :blue-background[App terminated successfully: ]", cpudate)   
