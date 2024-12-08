@@ -61,7 +61,7 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     conn.execute(f"USE DATABASE {db_name}")
     cursor = conn.cursor()
     
-    # Setup the sqlcode for inserting log asd a new row
+    # Setup sqlcode for inserting applog as a new row
     sqlcode = """INSERT INTO applog (appname, applink, apparam, appstatus, appmsg, cpudate)
             VALUES (?, ?, ?, ?, ?, ?);
             """
@@ -70,7 +70,7 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     try:
         cursor.execute(sqlcode, values)
     except Exception as errMsg:
-        e = RuntimeError(f"E"errMsg)
+        e = RuntimeError(f"**ERROR inserting new applog row: {errMsg}")
         st.exception(e)
     else:
         conn.commit()        
