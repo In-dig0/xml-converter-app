@@ -30,7 +30,7 @@ def display_applog() -> None:
     """ Display status and date/time of the app """
     appname = __file__
     rome_tz = pytz.timezone('Europe/Rome')
-    rome_datetime = tz.localize(datetime.datetime.now()) 
+    rome_datetime = rome_tz.localize(datetime.datetime.now()) 
     cpudate = rome_datetime.strftime("%Y-%m-%d %H:%M:%S")
     st.divider()
     st.markdown(''' :orange[**APP LOG**] ''')
