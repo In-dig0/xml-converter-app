@@ -29,9 +29,8 @@ def upload_xml_file() -> None:
 def display_applog() -> None:
     """ Display status and date/time of the app """
     appname = __file__
-    rome_tz = pytz.timezone('Europe/Rome')
-    rome_datetime = rome_tz.localize(datetime.datetime.now()) 
-    cpudate = rome_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    curr_datetime = datetime.datetime.now() 
+    cpudate = curr_datetime.strftime("%Y-%m-%d %H:%M:%S")
     st.divider()
     st.markdown(''' :orange[**APP LOG**] ''')
     st.write(" :mantelpiece_clock: :blue-background[App terminated successfully: ]", cpudate)   
