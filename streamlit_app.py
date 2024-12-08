@@ -29,8 +29,9 @@ def upload_xml_file() -> None:
 def display_applog() -> None:
     """ Display status and date/time of the app """
     appname = __file__
-    curr_datetime = datetime.datetime.now() 
-    cpudate = curr_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    local_tz = pytz.timezone('Europe/Paris')
+    local_time = local_tz.localize(datetime.datetime.now())
+    cpudate = local_time.strftime("%Y-%m-%d %H:%M:%S")
     st.divider()
     st.markdown(''' :orange[**APP LOG**] ''')
     st.write(" :mantelpiece_clock: :blue-background[App terminated successfully: ]", cpudate)   
@@ -282,9 +283,9 @@ def onSearch(opt=None):
     """ Function that modify the session state when clicked by user"""
     st.session_state["clicked"] = True
 
-
-if __name__ == "__main__":
+def main() -> None:
     """ Main function """
+    # Display app title
     display_app_title()
     st.markdown(''' :orange[**INPUT PARAMETERS**] ''')
     uploaded_file = upload_xml_file()
@@ -330,4 +331,5 @@ if __name__ == "__main__":
             log_values["appmsg"] = " "
             write_applog_to_sqlitecloud(log_values)
 
-
+if __name__ == "__main__":
+    main()
