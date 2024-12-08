@@ -309,6 +309,7 @@ if __name__ == "__main__":
             log_values["apparam"] = uploaded_file.name
             log_values["appstatus"] = "COMPLETED"
             log_values["appmsg"] = " "
+            st.write(f"Databse name: {st.secrets["DB_NAME"]}")
 #            write_applog_to_sqlitecloud(log_values)
 
 
