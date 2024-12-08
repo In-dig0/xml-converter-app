@@ -36,7 +36,7 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     db_link = os.getenv('SQLITECLOUD_DBLINK')
     db_apikey = os.getenv('SQLITECLOUD_APIKEY')
     db_name = os.getenv('SQLITECLOUD_DBNAME')
-    conn_string = db_link + db_apikey
+    conn_string = "".join([db_link, db_apikey])
     conn = sqlitecloud.connect(conn_string)
     conn.execute(f"USE DATABASE {db_name}")
     cursor = conn.cursor()
