@@ -309,6 +309,6 @@ if __name__ == "__main__":
             log_values["apparam"] = uploaded_file.name
             log_values["appstatus"] = "COMPLETED"
             log_values["appmsg"] = " "
-            write_applog_to_sqlitecloud(log_values)
+#            write_applog_to_sqlitecloud(log_values)
 
 
