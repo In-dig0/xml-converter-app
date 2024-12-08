@@ -1,33 +1,63 @@
 # Import 3-party packages
 import pandas as pd #Deal with dataframe 
 import streamlit as st
-# from lxml import etree #Parse XML files
 import io 
 import xmltodict
 import xlsxwriter
 from datetime import datetime
+import sqlitecloud
+import os
 
 def display_app_title():
+    """ Display program title and a short description of the app's scope """
     st.title(":blue[Working with xml invoice] :open_book:")
     st.subheader(":gray[Web app that converts a xml invoice document into a Excel file.]")
     st.markdown("Powered with Streamlit :streamlit:")
     st.divider()
 
 
-def upload_xml_file():
+def upload_xml_file() -> None:
+    """ Widget used to upload an xml file """
     uploaded_file = st.file_uploader("Choose a xml b2b invoice file:", type="xml", accept_multiple_files=False)
     return uploaded_file
 
 
-def write_applog():
+def display_applog() -> None:
+    """ Display status and date/time of the app """
     appname = __file__
-    cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")    
     st.divider()
-    st.write("--> :blue-background[App terminated successfully: ]", cpudate)   
+    st.markdown(''' :orange[**APP LOG**] ''')
+    st.write(" :mantelpiece_clock: :blue-background[App terminated successfully: ]", cpudate)   
+
+def write_applog_to_sqlitecloud(log_values:dict) -> None:   
+    appname = __file__
+    # Get database information
+    db_link = os.getenv('SQLITECLOUD_DBLINK')
+    db_apikey = os.getenv('SQLITECLOUD_APIKEY')
+    db_name = os.getenv('SQLITECLOUD_DBNAME')
+    conn_string = db_link + db_apikey
+    conn = sqlitecloud.connect(conn_string)
+    conn.execute(f"USE DATABASE {db_name}")
+    cursor = conn.cursor()
+    sqlcode = """INSERT INTO applog (appname, applink, apparam, appstatus, appmsg, cpudate)
+            VALUES (?, ?, ?, ?, ?, ?);
+            """
+    cpudate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    values = (log_values["appname"], log_values["applink"], log_values["apparam"], log_values["appstatus"], log_values["appmsg"], cpudate)
+    try:
+        cursor.execute(sqlcode, values)
+    except Exception as errMsg:
+        e = RuntimeError(errMsg)
+        st.exception(e)
+    else:
+        conn.commit()        
+    finally:
+        cursor.close()
 
 
 def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
-    """ Function that searches keywords in a columnn_list of the dataframe df and returns the dataframe filtered"""
+    """ Group the amount of rows by some header/position fields """
     df_grouped = pd.DataFrame()   
     # Raggruppiamo per i campi significativi e sommiamo i valori di "prezzo unitario"
     df_grouped = df_in.groupby(["T_filein", "T_num_doc", "T_data_doc", "P_nrdisegno", "P_commessa"], as_index=False).agg({"P_prezzo_tot": "sum"})
@@ -234,16 +264,10 @@ def onSearch(opt=None):
     st.session_state["clicked"] = True
 
 
-#@st.cache_data
-def csv_convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
-#    return df.to_csv().encode("utf-8")    
-    return df.to_csv(header=True, index=False, sep=';', decimal= ",")
-
-
 if __name__ == "__main__":
+    """ Main function """
     display_app_title()
-    st.markdown(''' :orange[**INPUT FILE**] ''')
+    st.markdown(''' :orange[**INPUT PARAMETERS**] ''')
     uploaded_file = upload_xml_file()
     grouping_opt = st.toggle("Activate grouping feature")
     
@@ -260,7 +284,7 @@ if __name__ == "__main__":
             df = parse_xml(uploaded_file, grouping_opt)
             st.divider()
             st.markdown(''' :orange[**OUTPUT INFO**] ''')
-            st.write("--> :green[Number of record of output dataframe: ]",len(df))            
+            st.write("--> :green[Output dataframe records: ]",len(df))            
             st.dataframe(df, hide_index=False)
             if len(df) > 0:
                 buffer = io.BytesIO()
@@ -270,12 +294,21 @@ if __name__ == "__main__":
                     df.to_excel(writer, sheet_name="Invoice")
                     # Close the Pandas Excel writer and output the Excel file to the buffer
                     writer.close()
-                file_out = uploaded_file.name.replace(".xml",".xlsx")
+                fileout_name = uploaded_file.name.replace(".xml",".xlsx")
                 st.download_button(
                     label="Download Excel",
                     data=buffer,
-                    file_name=file_out,
+                    file_name=fileout_name,
                     mime="application/vnd.ms-excel",
                     icon="⏬"        
                 )
-            write_applog()
+            display_applog()
+            log_values = dict()
+            log_values["appname"] = __file__
+            log_values["applink"] = " "
+            log_values["apparam"] = uploaded_file.name
+            log_values["appstatus"] = "COMPLETED"
+            log_values["appmsg"] = " "
+            write_applog_to_sqlitecloud(log_values)
+
+
