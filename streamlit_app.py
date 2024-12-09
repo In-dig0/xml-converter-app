@@ -40,14 +40,22 @@ def display_applog() -> None:
 def write_applog_to_sqlitecloud(log_values:dict) -> None:
     """ Write applog into SQLite Cloud Database """
     appname = __file__
+    db_link = ""
+    db_apikey = ""
+    db_name = ""
     # Get database information
     try:
         db_link = st.secrets["SQLITE_DBLINK"]
         db_apikey = st.secrets["SQLITE_APIKEY"]
         db_name = st.secrets["SQLITE_DBNAME"]
     except Exception as errMsg:
-        e = RuntimeError("**ERROR getting database credentials!")
-        st.exception(e)
+        try:
+            db_link = os.getenv("SQLITE_DBLINK")
+            db_apikey = os.getenv("SQLITE_APIKEY")
+            db_name = os.getenv("SQLITE_DBNAME")
+        except Exception as errMsg:    
+            e = RuntimeError("**ERROR getting database credentials!")
+            st.exception(e)
     
     conn_string = "".join([db_link, db_apikey])
     # Connect to SQLite Cloud platform
