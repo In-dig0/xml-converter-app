@@ -38,7 +38,7 @@ def display_applog() -> None:
 
 
 def write_applog_to_sqlitecloud(log_values:dict) -> None:
-    """ Write applog into SQLite Cloud Database"""
+    """ Write applog into SQLite Cloud Database """
     appname = __file__
     # Get database information
     try:
@@ -84,7 +84,7 @@ def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
     """ Group the amount of rows by some header/position fields """
     df_grouped = pd.DataFrame()   
     # Raggruppiamo per i campi significativi e sommiamo i valori di "prezzo unitario"
-    df_grouped = df_in.groupby(["T_filein", "T_num_doc", "T_data_doc", "P_nrdisegno", "P_commessa"], as_index=False).agg({"P_prezzo_tot": "sum"})
+    df_grouped = df_in.groupby(["T_filein", "T_num_doc", "T_data_doc", "P_nrdisegno", "P_commessa", "P_nrddt"], as_index=False).agg({"P_prezzo_tot": "sum"})
     # Rinominiamo la colonna "P_prezzo_tot" in "P_importo"
     df_grouped = df_grouped.rename(columns={"P_prezzo_tot": "P_importo"})
     df_grouped["P_importo"] = df_grouped["P_importo"].round(2)
