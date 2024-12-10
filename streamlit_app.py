@@ -27,7 +27,7 @@ def upload_xml_file() -> None:
 
 
 def display_applog() -> None:
-    """ Display status and date/time of the app """
+    """ Display status and date/time when run is finished """
     appname = __file__
     local_tz = pytz.timezone('Europe/Paris')
     local_time = local_tz.localize(datetime.datetime.now())
@@ -49,16 +49,15 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
         db_link = os.getenv("SQLITECLOUD_DBLINK")
         db_apikey = os.getenv("SQLITECLOUD_APIKEY")
         db_name = os.getenv("SQLITECLOUD_DBNAME")
-    except Exception as errMsg:
+    except st.StreamlitAPIException as errMsg:
         try:
             #Search DB credentials using ST.SECRETS
             db_link = st.secrets["SQLITE_DBLINK"]
             db_apikey = st.secrets["SQLITE_APIKEY"]
             db_name = st.secrets["SQLITE_DBNAME"]
-        except Exception as errMsg:
+        except st.StreamlitAPIException as errMsg:
             st.write("**ERROR: DB credentials NOT FOUND")    
-            e = RuntimeError("**ERROR getting database credentials!")
-            st.exception(e)
+            st.error(f'An error occurred: {errMsg}')
     
     conn_string = "".join([db_link, db_apikey])
     # Connect to SQLite Cloud platform
