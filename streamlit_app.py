@@ -57,7 +57,7 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
             db_name = st.secrets["SQLITE_DBNAME"]
         except st.StreamlitAPIException as errMsg:
             st.write("**ERROR: DB credentials NOT FOUND")    
-            st.error(f'An error occurred: {errMsg}')
+            st.error(f"An error occurred: {errMsg}", icon="🚨")
     
     conn_string = "".join([db_link, db_apikey])
     # Connect to SQLite Cloud platform
