@@ -46,17 +46,16 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     # Get database information
     st.write("Search DB credentials using ST.SECRETS")
     try:
-        db_link = st.secrets["SQLITE_DBLINK"]
-        db_apikey = st.secrets["SQLITE_APIKEY"]
-        db_name = st.secrets["SQLITE_DBNAME"]
-        st.write(db_link, db_name)
+        #Search DB credentials using OS.GETENV
+        db_link = os.getenv("SQLITECLOUD_DBLINK")
+        db_apikey = os.getenv("SQLITECLOUD_APIKEY")
+        db_name = os.getenv("SQLITECLOUD_DBNAME")
     except Exception as errMsg:
-        st.write("Search DB credentials using OS.GETENV")
         try:
-            db_link = os.getenv("SQLITECLOUD_DBLINK")
-            db_apikey = os.getenv("SQLITECLOUD_APIKEY")
-            db_name = os.getenv("SQLITECLOUD_DBNAME")
-            st.write(db_link, db_name)
+            #Search DB credentials using ST.SECRETS
+            db_link = st.secrets["SQLITE_DBLINK"]
+            db_apikey = st.secrets["SQLITE_APIKEY"]
+            db_name = st.secrets["SQLITE_DBNAME"]
         except Exception as errMsg:
             st.write("**ERROR: DB credentials NOT FOUND")    
             e = RuntimeError("**ERROR getting database credentials!")
