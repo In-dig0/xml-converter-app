@@ -44,7 +44,6 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     db_apikey = ""
     db_name = ""
     # Get database information
-    st.write("Search DB credentials using ST.SECRETS")
     try:
         #Search DB credentials using OS.GETENV
         db_link = os.getenv("SQLITECLOUD_DBLINK")
