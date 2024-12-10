@@ -50,9 +50,9 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
         db_name = st.secrets["SQLITE_DBNAME"]
     except Exception as errMsg:
         try:
-            db_link = os.getenv("SQLITE_DBLINK")
-            db_apikey = os.getenv("SQLITE_APIKEY")
-            db_name = os.getenv("SQLITE_DBNAME")
+            db_link = os.getenv("SQLITECLOUD_DBLINK")
+            db_apikey = os.getenv("SQLITECLOUD_APIKEY")
+            db_name = os.getenv("SQLITECLOUD_DBNAME")
         except Exception as errMsg:    
             e = RuntimeError("**ERROR getting database credentials!")
             st.exception(e)
