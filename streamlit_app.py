@@ -10,7 +10,7 @@ import pytz
 import datetime
 import os
 
-
+APPNAME = "XML_CONVERTER" #Web app that converts a xml invoice document into a Excel file
 
 def display_app_title():
     """ Display program title and a short description of the app's scope """
@@ -334,8 +334,8 @@ def main() -> None:
                 )
             display_applog()
             log_values = dict()
-            log_values["appname"] = __file__
-            log_values["applink"] = " "
+            log_values["appname"] = APPNAME
+            log_values["applink"] = __file__
             log_values["apparam"] = uploaded_file.name
             log_values["appstatus"] = "COMPLETED"
             log_values["appmsg"] = " "
