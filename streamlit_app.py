@@ -39,7 +39,7 @@ def display_applog() -> None:
 
 def write_applog_to_sqlitecloud(log_values:dict) -> None:
     """ Write applog into SQLite Cloud Database """
-    appname = __file__
+
     db_link = ""
     db_apikey = ""
     db_name = ""
@@ -56,17 +56,15 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
             db_apikey = st.secrets["SQLITE_APIKEY"]
             db_name = st.secrets["SQLITE_DBNAME"]
         except st.StreamlitAPIException as errMsg:
-            st.write("**ERROR: DB credentials NOT FOUND")    
-            st.error(f"An error occurred: {errMsg}", icon="🚨")
+            st.error(f"**ERROR: DB credentials NOT FOUND: {errMsg}", icon="🚨")
     
     conn_string = "".join([db_link, db_apikey])
     # Connect to SQLite Cloud platform
     try:
         conn = sqlitecloud.connect(conn_string)
-    except Exception as errMsg:
-        e = RuntimeError(f"**ERROR connecting to database: {errMsg}")
-        st.exception(e)
-    
+    except st.StreamlitAPIException as errMsg:
+        st.error(f"**ERROR connecting to database: {errMsg}", icon="🚨")
+
     # Open SQLite database
     conn.execute(f"USE DATABASE {db_name}")
     cursor = conn.cursor()
@@ -81,9 +79,8 @@ def write_applog_to_sqlitecloud(log_values:dict) -> None:
     values = (log_values["appname"], log_values["applink"], log_values["apparam"], log_values["appstatus"], log_values["appmsg"], cpudate)
     try:
         cursor.execute(sqlcode, values)
-    except Exception as errMsg:
-        e = RuntimeError(f"**ERROR inserting new applog row: {errMsg}")
-        st.exception(e)
+    except st.StreamlitAPIException as errMsg:  
+        st.error(f"**ERROR inserting new applog row: {errMsg}", icon="🚨")
     else:
         conn.commit()        
     finally:
