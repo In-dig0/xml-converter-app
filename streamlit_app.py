@@ -120,6 +120,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     p_nrdisegno = list()
     p_commessa = list()
     p_nrddt = list()
+    p_intento = list()
 
     # To convert to a string based IO:
     stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
