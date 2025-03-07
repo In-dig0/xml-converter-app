@@ -175,6 +175,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
     # Extract data from FatturaElettronicaBody - DatiBeniServizi
     lines = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiBeniServizi"]["DettaglioLinee"]
     for line in lines:
+        st.write(line)
         try:
             tag_nr_linea = line["NumeroLinea"]
         except KeyError:
@@ -225,10 +226,12 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
 
         if "AltriDatiGestionali" in line:
             lista_allegati = line["AltriDatiGestionali"]
+            #st.info(lista_allegati)
             tag_nrdisegno = "**"
             tag_commessa = "**"
             tag_nrddt = "**"
             for allegati in lista_allegati:
+                st.info(allegati)
                 if allegati["TipoDato"] == "DISEGNO":
                     tag_nrdisegno = allegati["RiferimentoTesto"]
                 elif allegati["TipoDato"] == "COMMESSA":
