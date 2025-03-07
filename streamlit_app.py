@@ -238,13 +238,17 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
                     tag_commessa = allegati["RiferimentoTesto"]
                 elif allegati["TipoDato"] == "N01":
                     tag_nrddt = allegati["RiferimentoTesto"]
+                elif allegati["TipoDato"] == "INTENTO":
+                    tag_intento = allegati["RiferimentoTesto"]                    
         else:
             tag_nrdisegno = "**"
             tag_commessa = "**"
-            tag_nrddt = "**"    
+            tag_nrddt = "**" 
+            tag_intento = "**"   
         p_nrdisegno.append(tag_nrdisegno)
         p_commessa.append(tag_commessa)
         p_nrddt.append(tag_nrddt)
+        p_intento.append(tag_intento)
 
     # Adjust lists size in order to have the same number of elements   
     nr_lines = len(p_nr_linea)
@@ -273,6 +277,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
                            'P_nrdisegno': p_nrdisegno,
                            'P_commessa': p_commessa,
                            'P_nrddt': p_nrddt,
+                           'P_intento': p_intento
                            })
     # Convert some columns into float data type
     df_out['T_importo_doc'] = df_out['T_importo_doc'].astype(float)
