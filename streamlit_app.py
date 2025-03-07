@@ -231,6 +231,7 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
             tag_nrdisegno = "**"
             tag_commessa = "**"
             tag_nrddt = "**"
+            tag_intento = "**"             
             for allegati in lista_allegati:
                 st.info(allegati)
                 if allegati["TipoDato"] == "DISEGNO":
