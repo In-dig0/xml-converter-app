@@ -234,14 +234,16 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
             tag_intento = "**"             
             for allegati in lista_allegati:
                 #st.info(allegati)
-                if allegati["TipoDato"] == "DISEGNO":
-                    tag_nrdisegno = allegati["RiferimentoTesto"]
-                elif allegati["TipoDato"] == "COMMESSA":
-                    tag_commessa = allegati["RiferimentoTesto"]
-                elif allegati["TipoDato"] == "N01":
-                    tag_nrddt = allegati["RiferimentoTesto"]
-                elif allegati["TipoDato"] == "INTENTO":
-                    tag_intento = allegati["RiferimentoTesto"]                    
+                if isinstance(allegati, dict):  # Verifica che allegati sia un dizionario
+                    if "TipoDato" in allegati:  # Verifica che la chiave esista
+                        if allegati["TipoDato"] == "DISEGNO":
+                            tag_nrdisegno = allegati["RiferimentoTesto"]
+                        elif allegati["TipoDato"] == "COMMESSA":
+                            tag_commessa = allegati["RiferimentoTesto"]
+                        elif allegati["TipoDato"] == "N01":
+                            tag_nrddt = allegati["RiferimentoTesto"]
+                        elif allegati["TipoDato"] == "INTENTO":
+                            tag_intento = allegati["RiferimentoTesto"]                    
         else:
             tag_nrdisegno = "**"
             tag_commessa = "**"
