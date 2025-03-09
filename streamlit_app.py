@@ -225,30 +225,28 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
             tag_codiva = "0"
         p_codiva.append(tag_codiva) 
 
-        if "AltriDatiGestionali" in line:
-            lista_allegati = line["AltriDatiGestionali"]
-            #st.info(lista_allegati)
-            tag_nrdisegno = "**"
-            tag_commessa = "**"
-            tag_nrddt = "**"
-            tag_intento = "**"             
-            for allegati in lista_allegati:
-                #st.info(allegati)
-                if isinstance(allegati, dict):  # Verifica che allegati sia un dizionario
-                    if "TipoDato" in allegati:  # Verifica che la chiave esista
-                        if allegati["TipoDato"] == "DISEGNO":
-                            tag_nrdisegno = allegati["RiferimentoTesto"]
-                        elif allegati["TipoDato"] == "COMMESSA":
-                            tag_commessa = allegati["RiferimentoTesto"]
-                        elif allegati["TipoDato"] == "N01":
-                            tag_nrddt = allegati["RiferimentoTesto"]
-                        elif allegati["TipoDato"] == "INTENTO":
-                            tag_intento = allegati["RiferimentoTesto"]                    
-        else:
-            tag_nrdisegno = "**"
-            tag_commessa = "**"
-            tag_nrddt = "**" 
-            tag_intento = "**"   
+
+        lista_allegati = line["AltriDatiGestionali"]
+        tag_nrdisegno = "**"
+        tag_commessa = "**"
+        tag_nrddt = "**"
+        tag_intento = "**"
+        # Converti in lista se è un singolo dizionario
+        if isinstance(lista_allegati, dict):
+            lista_allegati = [lista_allegati]  # Conversione in lista con un solo elemento               
+        
+        for allegati in lista_allegati:
+            if isinstance(allegati, dict):  # Verifica che allegati sia un dizionario
+                if "TipoDato" in allegati:  # Verifica che la chiave esista
+                    if allegati["TipoDato"] == "DISEGNO":
+                        tag_nrdisegno = allegati["RiferimentoTesto"]
+                    elif allegati["TipoDato"] == "COMMESSA":
+                        tag_commessa = allegati["RiferimentoTesto"]
+                    elif allegati["TipoDato"] == "N01":
+                        tag_nrddt = allegati["RiferimentoTesto"]
+                    elif allegati["TipoDato"] == "INTENTO":
+                        tag_intento = allegati["RiferimentoTesto"]                    
+        
         p_nrdisegno.append(tag_nrdisegno)
         p_commessa.append(tag_commessa)
         p_nrddt.append(tag_nrddt)
