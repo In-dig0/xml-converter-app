@@ -175,6 +175,9 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
 
     # Extract data from FatturaElettronicaBody - DatiBeniServizi
     lines = xml_dict[tag_root]["FatturaElettronicaBody"]["DatiBeniServizi"]["DettaglioLinee"]
+    tag_nrdisegno_prev = "**"
+    tag_commessa_prev = "**"
+    tag_nrddt_prev = "**"
     for line in lines:
         #st.write(line)
         try:
@@ -240,13 +243,23 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
                 if "TipoDato" in allegati:  # Verifica che la chiave esista
                     if allegati["TipoDato"] == "DISEGNO":
                         tag_nrdisegno = allegati["RiferimentoTesto"]
+                        tag_nrdisegno_prev = tag_nrdisegno    
                     elif allegati["TipoDato"] == "COMMESSA":
                         tag_commessa = allegati["RiferimentoTesto"]
+                        tag_commessa_prev = tag_commessa                      
                     elif allegati["TipoDato"] == "N01":
                         tag_nrddt = allegati["RiferimentoTesto"]
+                        tag_nrddt_prev = tag_nrddt                     
                     elif allegati["TipoDato"] == "INTENTO":
-                        tag_intento = allegati["RiferimentoTesto"]                    
+                        tag_intento = allegati["RiferimentoTesto"]                  
         
+        if tag_nrdisegno == "**":
+            tag_nrdisegno = tag_nrdisegno_prev
+        if tag_commessa == "**":
+            tag_commessa = tag_commessa_prev
+        if tag_nrddt == "**":
+            tag_nrddt = tag_nrddt_prev     
+
         p_nrdisegno.append(tag_nrdisegno)
         p_commessa.append(tag_commessa)
         p_nrddt.append(tag_nrddt)
