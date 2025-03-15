@@ -323,7 +323,9 @@ def main() -> None:
     grouping_opt = st.toggle("Activate grouping feature")
     if grouping_opt:
         energetic_contribution_mgmt = st.toggle("Energetic contribution mgmt", value=True)
-    
+    else:
+        energetic_contribution_mgmt = False
+        
     if "clicked" not in st.session_state:
         st.session_state["clicked"] = False
 
