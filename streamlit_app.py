@@ -98,7 +98,7 @@ def df_sum_codart(df_in: pd.DataFrame) -> pd.DataFrame:
     return df_grouped
 
 
-def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
+def parse_xml(uploaded_file, grouping_opt, energetic_contribution_mgmt) -> pd.DataFrame:
     """ Function that parses an XMLB2B file (invoice) and returns a dataframe containing the most important informations of the documents"""
     # Inizialize variables
     t_piva_mitt = list()
@@ -253,12 +253,13 @@ def parse_xml(uploaded_file, grouping_opt) -> pd.DataFrame:
                     elif allegati["TipoDato"] == "INTENTO":
                         tag_intento = allegati["RiferimentoTesto"]                  
         
-        if tag_nrdisegno == "**":
-            tag_nrdisegno = tag_nrdisegno_prev
-        if tag_commessa == "**":
-            tag_commessa = tag_commessa_prev
-        if tag_nrddt == "**":
-            tag_nrddt = tag_nrddt_prev     
+        if energetic_contribution_mgmt:
+            if tag_nrdisegno == "**":
+                tag_nrdisegno = tag_nrdisegno_prev
+            if tag_commessa == "**":
+                tag_commessa = tag_commessa_prev
+            if tag_nrddt == "**":
+                tag_nrddt = tag_nrddt_prev     
 
         p_nrdisegno.append(tag_nrdisegno)
         p_commessa.append(tag_commessa)
@@ -320,6 +321,8 @@ def main() -> None:
     st.markdown(''' :orange[**INPUT PARAMETERS**] ''')
     uploaded_file = upload_xml_file()
     grouping_opt = st.toggle("Activate grouping feature")
+    if grouping_opt:
+        energetic_contribution_mgmt = st.toggle("Energetic contribution mgmt", value=True)
     
     if "clicked" not in st.session_state:
         st.session_state["clicked"] = False
@@ -331,7 +334,7 @@ def main() -> None:
     
     if st.session_state["clicked"]:
         if uploaded_file is not None:
-            df = parse_xml(uploaded_file, grouping_opt)
+            df = parse_xml(uploaded_file, grouping_opt, energetic_contribution_mgmt)
             st.divider()
             st.markdown(''' :orange[**OUTPUT INFO**] ''')
             st.write("--> :green[Output dataframe records: ]",len(df))            
